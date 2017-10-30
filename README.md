@@ -1,1 +1,1 @@
-# koa-router-decorators
+# koa-router-decors
