@@ -35,8 +35,10 @@ module.exports = {
 	route,
 	middlewares,
 
-	load: function(prefix, folder){
-		glob.sync(path.join(folder, './**/*.js')).forEach((item)=>require(item));
+	load: function(prefix, folder, options){
+		options = options || {};
+		let extname = options.extname || '.js';
+		glob.sync(path.join(folder, `./**/*${extname}`)).forEach((item)=>require(item));
 		return router.prefix(prefix);
 	}
 };

@@ -1,6 +1,6 @@
 {
   "name": "koa-router-decors",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Write Koa routers with decorators",
   "main": "index.js",
   "scripts": {
