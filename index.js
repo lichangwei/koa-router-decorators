@@ -6,14 +6,12 @@ const router = new require('koa-router')();
 function route(method, path, ...middlewares){
 	return function(target, property, descriptor){
 		process.nextTick(function(){
-			let mws = [];
-			if(target.middlewares){
-				mws = mws.concat(target.middlewares);
+			//这是一个简单的中间件，将用户书写的路径添加到`ctx.params`中
+			async function addPathToParams(ctx, next){
+                ctx.params.PATH = path;
+                await next();
 			}
-			if(middlewares){
-				mws = mws.concat(middlewares);
-			}
-			mws.push(target[property]);
+            let mws = [addPathToParams, ...target.middlewares, ...middlewares, target[property]];
 			router[method](path, ...mws);
 		});
 	};
