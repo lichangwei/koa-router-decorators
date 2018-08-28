@@ -38,6 +38,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var path = require("path");
 var glob = require("glob");
 var KoaRouter = require("koa-router");
+function getDefaultLoadOptions() {
+    return {
+        extname: '.{js,ts}',
+        verbose: false,
+    };
+}
 var router = new KoaRouter();
 exports.get = function (path) {
     var middlewares = [];
@@ -116,13 +122,16 @@ exports.route = function (method, path) {
     };
 };
 exports.load = function (prefix, folder, options) {
-    options = Object.assign({
-        extname: '.js',
-        verbose: false,
-    }, options);
+    options = Object.assign(getDefaultLoadOptions(), options);
     glob.sync(path.join(folder, "./**/*" + options.extname)).forEach(function (item) { return require(item); });
+    router.prefix(prefix);
     if (options.verbose) {
-        console.log(router.stack.map(function (route) { return route.path; }));
+        console.info('-'.repeat(21), 'routes', '-'.repeat(21));
+        var routes = router.stack.map(function (route) {
+            var method = route.methods[route.methods.length - 1];
+            console.info(method + "\t" + route.path);
+        });
+        console.info('-'.repeat(50));
     }
-    return router.prefix(prefix);
+    return router;
 };
