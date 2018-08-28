@@ -2,17 +2,14 @@
   "name": "koa-router-decors-sample",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "babel-node index.js"
+    "start": "ts-node-dev index.ts"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "glob": "^7.1.1",
     "koa": "^2.2.0"
-  },
-  "devDependencies": {
-    "babel-plugin-transform-decorators-legacy": "^1.3.4"
   }
 }

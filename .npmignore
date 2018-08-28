@@ -1,4 +1,5 @@
 .gitignore
 .prettierrc.js
+tsconfig.json
 
 sample
