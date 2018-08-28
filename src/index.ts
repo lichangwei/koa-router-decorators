@@ -6,7 +6,7 @@ import * as KoaRouter from 'koa-router';
 type HTTPMethod = 'get' | 'put' | 'del' | 'post' | 'patch';
 type LoadOptions = {
     /**
-     * 路由文件扩展名，默认值是`.js`
+     * 路由文件扩展名，默认值是`.{js,ts}`
      */
     extname?: string;
     /**
@@ -16,7 +16,7 @@ type LoadOptions = {
 };
 function getDefaultLoadOptions() {
     return {
-        extname: '.js',
+        extname: '.{js,ts}',
         verbose: false,
     };
 }
