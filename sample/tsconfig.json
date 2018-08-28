@@ -11,8 +11,8 @@
         "lib": ["es7"]
     },
     "include": [
-        "index.ts",
-        "router/**/*.ts"
+        "src",
+        "test"
     ],
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,

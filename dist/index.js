@@ -123,13 +123,3 @@ exports.load = function (prefix, folder, options) {
     glob.sync(path.join(folder, "./**/*" + extname)).forEach(function (item) { return require(item); });
     return router.prefix(prefix);
 };
-exports.default = {
-    get: exports.get,
-    put: exports.put,
-    del: exports.del,
-    post: exports.post,
-    patch: exports.patch,
-    route: exports.route,
-    middlewares: exports.middlewares,
-    load: exports.load,
-};

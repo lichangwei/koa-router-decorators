@@ -49,14 +49,3 @@ export const load = function(prefix: string, folder: string, options?: LoadOptio
     glob.sync(path.join(folder, `./**/*${extname}`)).forEach((item) => require(item));
     return router.prefix(prefix);
 };
-
-export default {
-    get,
-    put,
-    del,
-    post,
-    patch,
-    route,
-    middlewares,
-    load,
-};

@@ -13,14 +13,4 @@ export declare const patch: (path: string, ...middlewares: import("koa-compose")
 export declare const middlewares: (...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any) => void;
 export declare const route: (method: HTTPMethod, path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
 export declare const load: (prefix: string, folder: string, options?: LoadOptions) => KoaRouter;
-declare const _default: {
-    get: (path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
-    put: (path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
-    del: (path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
-    post: (path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
-    patch: (path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
-    route: (method: HTTPMethod, path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
-    middlewares: (...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any) => void;
-    load: (prefix: string, folder: string, options?: LoadOptions) => KoaRouter;
-};
-export default _default;
+export {};
