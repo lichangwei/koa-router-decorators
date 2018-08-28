@@ -4,6 +4,7 @@ import * as KoaRouter from 'koa-router';
 declare type HTTPMethod = 'get' | 'put' | 'del' | 'post' | 'patch';
 declare type LoadOptions = {
     extname?: string;
+    verbose?: boolean;
 };
 export declare const get: (path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
 export declare const put: (path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;

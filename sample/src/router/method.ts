@@ -1,11 +1,11 @@
 import * as Koa from 'koa';
-import { get, put, post, del, patch, middlewares } from 'koa-router-decors';
+import { get, put, post, del, patch, middlewares } from '../../../src/index';
 
-const setResponseTime = (ctx: Koa.Context, next) => {
+async function setResponseTime(ctx: Koa.Context, next) {
     let date = new Date();
-    next();
+    await next();
     ctx.set('X-Response-Time', String(new Date().getTime() - date.getTime()));
-};
+}
 
 @middlewares(setResponseTime)
 class User {

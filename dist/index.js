@@ -89,37 +89,40 @@ exports.route = function (method, path) {
         middlewares[_i - 2] = arguments[_i];
     }
     return function (target, property, descriptor) {
-        process.nextTick(function () {
-            var mws = [];
-            //这是一个简单的中间件，将用户输入的路由部分添加到`ctx.params`中
-            mws.push(function addPathToParams(ctx, next) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                ctx.params.route = path;
-                                return [4 /*yield*/, next()];
-                            case 1:
-                                _a.sent();
-                                return [2 /*return*/];
-                        }
-                    });
+        var mws = [];
+        //这是一个简单的中间件，将用户输入的路由部分添加到`ctx.params`中
+        mws.push(function addPathToParams(ctx, next) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            ctx.params.route = path;
+                            return [4 /*yield*/, next()];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
                 });
             });
-            if (target.middlewares) {
-                mws = mws.concat(target.middlewares);
-            }
-            if (middlewares) {
-                mws = mws.concat(middlewares);
-            }
-            mws.push(target[property]);
-            router[method].apply(router, [path].concat(mws));
         });
+        if (target.middlewares) {
+            mws = mws.concat(target.middlewares);
+        }
+        if (middlewares) {
+            mws = mws.concat(middlewares);
+        }
+        mws.push(target[property]);
+        router[method].apply(router, [path].concat(mws));
     };
 };
 exports.load = function (prefix, folder, options) {
-    options = options || {};
-    var extname = options.extname || '.js';
-    glob.sync(path.join(folder, "./**/*" + extname)).forEach(function (item) { return require(item); });
+    options = Object.assign({
+        extname: '.js',
+        verbose: false,
+    }, options);
+    glob.sync(path.join(folder, "./**/*" + options.extname)).forEach(function (item) { return require(item); });
+    if (options.verbose) {
+        console.log(router.stack.map(function (route) { return route.path; }));
+    }
     return router.prefix(prefix);
 };

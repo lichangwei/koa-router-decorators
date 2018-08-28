@@ -1,5 +1,5 @@
 import * as Koa from 'koa';
-import * as router from 'koa-router-decors';
+import * as router from '../../src/index';
 
 const app = new Koa();
 app.use(router.load('/api', `${__dirname}/router`, { extname: '.ts' }).routes());
