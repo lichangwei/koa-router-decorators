@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "start": "ts-node-dev src/index.ts"
+    "start": "ts-node-dev src/index.ts",
+    "check": "npx npm-check -u"
   },
   "author": "lichangwei",
   "license": "MIT",
