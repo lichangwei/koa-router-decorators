@@ -1,4 +1,6 @@
 .gitignore
+.npmignore
+.npmrc
 .prettierrc.js
 tsconfig.json
 
