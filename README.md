@@ -4,7 +4,7 @@
 
 ## 使用方法
 
-1. 书写路由文件`user.ts`;
+###### 1. 书写路由文件`user.ts`;
 
 ```typescript
 import { get, put, post, del, patch } from 'koa-router-decors';
@@ -18,7 +18,7 @@ class User {
 }
 ```
 
-2. 加载路由文件
+###### 2. 加载路由文件
 
 ```typescript
 import * as Koa from 'koa';

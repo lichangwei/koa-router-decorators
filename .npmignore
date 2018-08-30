@@ -4,4 +4,6 @@
 .prettierrc.js
 tsconfig.json
 
+coverage
 sample
+test
