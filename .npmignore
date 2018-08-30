@@ -4,6 +4,7 @@
 .prettierrc.js
 tsconfig.json
 
+.nyc_output
 coverage
 sample
 test
