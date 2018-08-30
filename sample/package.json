@@ -4,19 +4,15 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "start": "ts-node-dev src/index.ts",
-    "test": "mocha --exit --reporter spec --check-leaks -r ts-node/register test/index.ts"
+    "start": "ts-node-dev src/index.ts"
   },
-  "author": "",
+  "author": "lichangwei",
   "license": "MIT",
   "dependencies": {
     "glob": "^7.1.1",
     "koa": "^2.2.0"
   },
   "devDependencies": {
-    "@types/mocha": "^5.2.5",
-    "mocha": "^5.2.0",
-    "supertest": "^3.1.0",
     "ts-node": "^7.0.1",
     "typescript": "^3.0.1"
   }

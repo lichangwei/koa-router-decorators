@@ -1,13 +1,19 @@
 import * as assert from 'assert';
 import 'mocha';
+import * as Koa from 'koa';
 import * as request from 'supertest';
-import app from '../src/index';
+
+import { load } from '../src/index';
+
+const app = new Koa();
+app.use(load('/api', `${__dirname}/router`, { verbose: true }).routes());
+const server = app.listen(9100);
 
 describe('正确收集路由', () => {
     'GET,PUT,POST,DELETE,PATCH'.split(',').forEach((method) => {
         const name = method.toLowerCase();
         it(`${method} /api/method`, (done) => {
-            request(app)
+            request(server)
                 [name]('/api/method')
                 .expect('Content-Type', /application\/json/)
                 .expect('X-Response-Time', /\d+/)
