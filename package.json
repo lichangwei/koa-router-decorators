@@ -1,6 +1,6 @@
 {
   "name": "koa-router-decors",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Write Koa routers with decorators",
   "author": "lichangwei",
   "license": "MIT License",
@@ -11,6 +11,9 @@
     "check": "npx npm-check -u",
     "test": "mocha --exit --reporter spec --check-leaks -r ts-node/register test/index.ts",
     "coverage": "nyc npm test && nyc report --reporter=lcov"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   },
   "nyc": {
     "extension": [
