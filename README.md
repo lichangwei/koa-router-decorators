@@ -25,6 +25,6 @@ import * as Koa from 'koa';
 import { load } from 'koa-router-decors';
 
 const app = new Koa();
-app.use(load('/api', 'router_path', { verbose: true }).routes());
+app.use(load('/api', 'router_path', { mode: 'development' }).routes());
 app.listen(9100);
 ```

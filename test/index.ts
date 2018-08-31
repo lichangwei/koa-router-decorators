@@ -6,7 +6,7 @@ import * as request from 'supertest';
 import { load } from '../src/index';
 
 const app = new Koa();
-app.use(load('/api', `${__dirname}/router`, { verbose: true }).routes());
+app.use(load('/api', `${__dirname}/router`, { mode: 'development' }).routes());
 const server = app.listen(9100);
 
 describe('正确收集路由', () => {
