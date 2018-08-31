@@ -9,6 +9,7 @@
   },
   "author": "lichangwei",
   "license": "MIT",
+  "private": true,
   "dependencies": {
     "glob": "^7.1.1",
     "koa": "^2.2.0"

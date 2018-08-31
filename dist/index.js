@@ -37,12 +37,49 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var path = require("path");
 var glob = require("glob");
+var PathToRegexp = require("path-to-regexp");
 var KoaRouter = require("koa-router");
 function getDefaultLoadOptions() {
     return {
+        mode: 'production',
         extname: '.{js,ts}',
-        verbose: false,
     };
+}
+function getRouteMethod(route) {
+    return route.methods[route.methods.length - 1];
+}
+function printAllRoute(router) {
+    console.info('-'.repeat(21), 'routes', '-'.repeat(21));
+    router.stack.forEach(function (route) {
+        console.info(getRouteMethod(route) + "\t" + route.path);
+    });
+    console.info('-'.repeat(50));
+}
+function checkConflict(router) {
+    var conflict = false;
+    router.stack.forEach(function (route1) {
+        var paths = [];
+        var method = getRouteMethod(route1);
+        var regexp = PathToRegexp(route1.path);
+        router.stack.forEach(function (route2) {
+            if (route1 === route2)
+                return;
+            if (method !== getRouteMethod(route2))
+                return;
+            if (regexp.test(route2.path)) {
+                paths.push(route2.path);
+            }
+        });
+        if (paths.length > 0) {
+            if (!conflict) {
+                conflict = true;
+                console.error('Conflict Route:');
+            }
+            console.error(method + "\t" + route1.path);
+            console.error(paths.map(function (path) { return "\t" + path; }).join('\n'));
+        }
+    });
+    console.info('-'.repeat(50));
 }
 var router = new KoaRouter();
 exports.get = function (path) {
@@ -128,15 +165,9 @@ exports.load = function (prefix, folder, options) {
     options = Object.assign(getDefaultLoadOptions(), options);
     glob.sync(path.join(folder, "./**/*" + options.extname)).forEach(function (item) { return require(item); });
     router.prefix(prefix);
-    if (options.verbose) {
-        process.nextTick(function () {
-            console.info('-'.repeat(21), 'routes', '-'.repeat(21));
-            router.stack.map(function (route) {
-                var method = route.methods[route.methods.length - 1];
-                console.info(method + "\t" + route.path);
-            });
-            console.info('-'.repeat(50));
-        });
+    if (options.mode === 'development') {
+        process.nextTick(function () { return printAllRoute(router); });
+        process.nextTick(function () { return checkConflict(router); });
     }
     return router;
 };

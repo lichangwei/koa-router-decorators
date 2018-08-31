@@ -9,9 +9,7 @@
         "allowSyntheticDefaultImports": true,
         "lib": ["es7"]
     },
-    "include": [
-        "src/**/*"
-    ],
+    "include": ["src", "test"],
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
