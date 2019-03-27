@@ -1,26 +1,82 @@
-import * as path from 'path';
-import * as Koa from 'koa';
 import * as glob from 'glob';
-import * as PathToRegexp from 'path-to-regexp';
+import * as Koa from 'koa';
 import * as KoaRouter from 'koa-router';
+import * as PathToRegexp from 'path-to-regexp';
 
 type HTTPMethod = 'get' | 'put' | 'del' | 'post' | 'patch';
 type LoadOptions = {
-    /**
-     * 开发模式还是生产模式，默认为生成模式
-     */
-    mode?: 'development' | 'production';
     /**
      * 路由文件扩展名，默认值是`.{js,ts}`
      */
     extname?: string;
 };
-function getDefaultLoadOptions() {
-    return {
-        mode: 'production',
-        extname: '.{js,ts}',
+type RouteOptions = {
+    /**
+     * 适用于某个请求比较特殊，需要单独制定前缀的情形
+     */
+    prefix?: string;
+    /**
+     * 给当前路由添加一个或多个中间件
+     */
+    middlewares?: Array<Koa.Middleware>;
+};
+
+export const get = (path: string, options?: RouteOptions) => route('get', path, options);
+export const post = (path: string, options?: RouteOptions) => route('post', path, options);
+export const put = (path: string, options?: RouteOptions) => route('put', path, options);
+export const del = (path: string, options?: RouteOptions) => route('del', path, options);
+export const patch = (path: string, options?: RouteOptions) => route('patch', path, options);
+/**
+ * 应用在类上，以给该类中所有路由添加中间件
+ * @param middlewares Koa.Middleware数组
+ */
+export const middlewares = function middlewares(middlewares: Array<Koa.Middleware>) {
+    return function(target) {
+        target.prototype.middlewares = middlewares;
     };
-}
+};
+
+let route = function(method: HTTPMethod, path: string, options: RouteOptions = {}) {
+    return function(target, property: string, descriptor) {};
+};
+
+export const load = function(prefix: string, folder: string, options: LoadOptions = {}): KoaRouter {
+    const extname = options.extname || '.{js,ts}';
+    // 新建路由器，并且重新定义route函数
+    const router = new KoaRouter();
+    route = function(method: HTTPMethod, path: string, options: RouteOptions = {}) {
+        return function(target, property: string, descriptor) {
+            process.nextTick(() => {
+                let mws = [];
+                // 将用户输入的路由部分添加到`ctx.params`中
+                mws.push(async function addPathToParams(ctx: Koa.Context, next) {
+                    ctx.params.route = path;
+                    await next();
+                });
+                if (target.middlewares) {
+                    mws = mws.concat(target.middlewares);
+                }
+                if (options.middlewares) {
+                    mws = mws.concat(options.middlewares);
+                }
+                mws.push(target[property]);
+                const _path = require('path').join('prefix' in options ? options.prefix : prefix, path);
+                router[method](_path, ...mws);
+            });
+        };
+    };
+    glob.sync(require('path').join(folder, `./**/*${extname}`)).forEach((item) => require(item));
+
+    // 开发环境中打印所有路由并且检查路径冲突
+    if (process.env.NODE_ENV === 'development') {
+        process.nextTick(() => {
+            printAllRoute(router);
+            checkConflict(router);
+        });
+    }
+    return router;
+};
+
 function getRouteMethod(route) {
     return route.methods[route.methods.length - 1];
 }
@@ -57,50 +113,3 @@ function checkConflict(router: KoaRouter) {
     });
     console.info('-'.repeat(50));
 }
-
-const router = new KoaRouter();
-
-export const get = (path: string, ...middlewares: Array<Koa.Middleware>) => route('get', path, ...middlewares);
-export const put = (path: string, ...middlewares: Array<Koa.Middleware>) => route('put', path, ...middlewares);
-export const del = (path: string, ...middlewares: Array<Koa.Middleware>) => route('del', path, ...middlewares);
-export const post = (path: string, ...middlewares: Array<Koa.Middleware>) => route('post', path, ...middlewares);
-export const patch = (path: string, ...middlewares: Array<Koa.Middleware>) => route('patch', path, ...middlewares);
-
-export const middlewares = function middlewares(...middlewares: Array<Koa.Middleware>) {
-    return function(target) {
-        target.prototype.middlewares = middlewares;
-    };
-};
-
-export const route = function(method: HTTPMethod, path: string, ...middlewares: Array<Koa.Middleware>) {
-    return function(target, property, descriptor) {
-        // 如果不使用`process.nextTick`，则得不到`target.middlewares`
-        process.nextTick(() => {
-            let mws = [];
-            // 将用户输入的路由部分添加到`ctx.params`中
-            mws.push(async function addPathToParams(ctx, next) {
-                ctx.params.route = path;
-                await next();
-            });
-            if (target.middlewares) {
-                mws = mws.concat(target.middlewares);
-            }
-            if (middlewares) {
-                mws = mws.concat(middlewares);
-            }
-            mws.push(target[property]);
-            router[method](path, ...mws);
-        });
-    };
-};
-
-export const load = function(prefix: string, folder: string, options?: LoadOptions): KoaRouter {
-    options = Object.assign(getDefaultLoadOptions(), options);
-    glob.sync(path.join(folder, `./**/*${options.extname}`)).forEach((item) => require(item));
-    router.prefix(prefix);
-    if (options.mode === 'development') {
-        process.nextTick(() => printAllRoute(router));
-        process.nextTick(() => checkConflict(router));
-    }
-    return router;
-};

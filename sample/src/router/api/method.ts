@@ -1,15 +1,10 @@
 import * as Koa from 'koa';
-import { get, put, post, del, patch, middlewares } from '../../../src/index';
+import { del, get, middlewares, patch, post, put } from '../../../../src/index';
 
-async function setResponseTime(ctx: Koa.Context, next) {
-    let date = new Date();
-    await next();
-    ctx.set('X-Response-Time', String(new Date().getTime() - date.getTime()));
-}
-
-@middlewares(setResponseTime)
+@middlewares([setResponseTime])
 class User {
     @get('/method')
+    @get('/method', { prefix: '' })
     async get(ctx: Koa.Context) {
         ctx.body = {
             method: ctx.method,
@@ -43,4 +38,10 @@ class User {
             method: ctx.method,
         };
     }
+}
+
+async function setResponseTime(ctx, next) {
+    let date = new Date();
+    await next();
+    ctx.set('X-Response-Time', String(new Date().getTime() - date.getTime()));
 }

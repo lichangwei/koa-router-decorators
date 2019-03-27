@@ -1,21 +1,21 @@
 {
-  "name": "koa-router-decors-sample",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.ts",
-  "scripts": {
-    "start": "ts-node-dev src/index.ts",
-    "check": "npx npm-check -u"
-  },
-  "author": "lichangwei",
-  "license": "MIT",
-  "private": true,
-  "dependencies": {
-    "glob": "^7.1.1",
-    "koa": "^2.2.0"
-  },
-  "devDependencies": {
-    "ts-node": "^7.0.1",
-    "typescript": "^3.0.1"
-  }
+    "name": "koa-router-decors-sample",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.ts",
+    "scripts": {
+        "start": "NODE_ENV=development ts-node-dev src/index.ts",
+        "check": "npx npm-check -u"
+    },
+    "author": "lichangwei",
+    "license": "MIT",
+    "private": true,
+    "dependencies": {
+        "glob": "^7.1.1",
+        "koa": "^2.2.0"
+    },
+    "devDependencies": {
+        "ts-node": "^7.0.1",
+        "typescript": "^3.0.1"
+    }
 }

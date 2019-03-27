@@ -1,5 +1,5 @@
 import * as Koa from 'koa';
-import { get, post } from '../../../src/index';
+import { get, post } from '../../../../src/index';
 
 class Conflict {
     @get('/conflict/users/:id')

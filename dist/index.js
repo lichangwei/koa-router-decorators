@@ -35,16 +35,74 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var path = require("path");
 var glob = require("glob");
-var PathToRegexp = require("path-to-regexp");
 var KoaRouter = require("koa-router");
-function getDefaultLoadOptions() {
-    return {
-        mode: 'production',
-        extname: '.{js,ts}',
+var PathToRegexp = require("path-to-regexp");
+exports.get = function (path, options) { return route('get', path, options); };
+exports.post = function (path, options) { return route('post', path, options); };
+exports.put = function (path, options) { return route('put', path, options); };
+exports.del = function (path, options) { return route('del', path, options); };
+exports.patch = function (path, options) { return route('patch', path, options); };
+/**
+ * 应用在类上，以给该类中所有路由添加中间件
+ * @param middlewares Koa.Middleware数组
+ */
+exports.middlewares = function middlewares(middlewares) {
+    return function (target) {
+        target.prototype.middlewares = middlewares;
     };
-}
+};
+var route = function (method, path, options) {
+    if (options === void 0) { options = {}; }
+    return function (target, property, descriptor) { };
+};
+exports.load = function (prefix, folder, options) {
+    if (options === void 0) { options = {}; }
+    var extname = options.extname || '.{js,ts}';
+    // 新建路由器，并且重新定义route函数
+    var router = new KoaRouter();
+    route = function (method, path, options) {
+        if (options === void 0) { options = {}; }
+        return function (target, property, descriptor) {
+            process.nextTick(function () {
+                var mws = [];
+                // 将用户输入的路由部分添加到`ctx.params`中
+                mws.push(function addPathToParams(ctx, next) {
+                    return __awaiter(this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    ctx.params.route = path;
+                                    return [4 /*yield*/, next()];
+                                case 1:
+                                    _a.sent();
+                                    return [2 /*return*/];
+                            }
+                        });
+                    });
+                });
+                if (target.middlewares) {
+                    mws = mws.concat(target.middlewares);
+                }
+                if (options.middlewares) {
+                    mws = mws.concat(options.middlewares);
+                }
+                mws.push(target[property]);
+                var _path = require('path').join('prefix' in options ? options.prefix : prefix, path);
+                router[method].apply(router, [_path].concat(mws));
+            });
+        };
+    };
+    glob.sync(require('path').join(folder, "./**/*" + extname)).forEach(function (item) { return require(item); });
+    // 开发环境中打印所有路由并且检查路径冲突
+    if (process.env.NODE_ENV === 'development') {
+        process.nextTick(function () {
+            printAllRoute(router);
+            checkConflict(router);
+        });
+    }
+    return router;
+};
 function getRouteMethod(route) {
     return route.methods[route.methods.length - 1];
 }
@@ -81,93 +139,3 @@ function checkConflict(router) {
     });
     console.info('-'.repeat(50));
 }
-var router = new KoaRouter();
-exports.get = function (path) {
-    var middlewares = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        middlewares[_i - 1] = arguments[_i];
-    }
-    return exports.route.apply(void 0, ['get', path].concat(middlewares));
-};
-exports.put = function (path) {
-    var middlewares = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        middlewares[_i - 1] = arguments[_i];
-    }
-    return exports.route.apply(void 0, ['put', path].concat(middlewares));
-};
-exports.del = function (path) {
-    var middlewares = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        middlewares[_i - 1] = arguments[_i];
-    }
-    return exports.route.apply(void 0, ['del', path].concat(middlewares));
-};
-exports.post = function (path) {
-    var middlewares = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        middlewares[_i - 1] = arguments[_i];
-    }
-    return exports.route.apply(void 0, ['post', path].concat(middlewares));
-};
-exports.patch = function (path) {
-    var middlewares = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        middlewares[_i - 1] = arguments[_i];
-    }
-    return exports.route.apply(void 0, ['patch', path].concat(middlewares));
-};
-exports.middlewares = function middlewares() {
-    var middlewares = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        middlewares[_i] = arguments[_i];
-    }
-    return function (target) {
-        target.prototype.middlewares = middlewares;
-    };
-};
-exports.route = function (method, path) {
-    var middlewares = [];
-    for (var _i = 2; _i < arguments.length; _i++) {
-        middlewares[_i - 2] = arguments[_i];
-    }
-    return function (target, property, descriptor) {
-        // 如果不使用`process.nextTick`，则得不到`target.middlewares`
-        process.nextTick(function () {
-            var mws = [];
-            // 将用户输入的路由部分添加到`ctx.params`中
-            mws.push(function addPathToParams(ctx, next) {
-                return __awaiter(this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                ctx.params.route = path;
-                                return [4 /*yield*/, next()];
-                            case 1:
-                                _a.sent();
-                                return [2 /*return*/];
-                        }
-                    });
-                });
-            });
-            if (target.middlewares) {
-                mws = mws.concat(target.middlewares);
-            }
-            if (middlewares) {
-                mws = mws.concat(middlewares);
-            }
-            mws.push(target[property]);
-            router[method].apply(router, [path].concat(mws));
-        });
-    };
-};
-exports.load = function (prefix, folder, options) {
-    options = Object.assign(getDefaultLoadOptions(), options);
-    glob.sync(path.join(folder, "./**/*" + options.extname)).forEach(function (item) { return require(item); });
-    router.prefix(prefix);
-    if (options.mode === 'development') {
-        process.nextTick(function () { return printAllRoute(router); });
-        process.nextTick(function () { return checkConflict(router); });
-    }
-    return router;
-};

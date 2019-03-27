@@ -1,23 +1,31 @@
 /// <reference types="koa-compose" />
 import * as Koa from 'koa';
 import * as KoaRouter from 'koa-router';
-declare type HTTPMethod = 'get' | 'put' | 'del' | 'post' | 'patch';
 declare type LoadOptions = {
-    /**
-     * 开发模式还是生产模式，默认为生成模式
-     */
-    mode?: 'development' | 'production';
     /**
      * 路由文件扩展名，默认值是`.{js,ts}`
      */
     extname?: string;
 };
-export declare const get: (path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
-export declare const put: (path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
-export declare const del: (path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
-export declare const post: (path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
-export declare const patch: (path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
-export declare const middlewares: (...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any) => void;
-export declare const route: (method: HTTPMethod, path: string, ...middlewares: import("koa-compose").Middleware<Koa.Context>[]) => (target: any, property: any, descriptor: any) => void;
-export declare const load: (prefix: string, folder: string, options?: LoadOptions) => KoaRouter;
+declare type RouteOptions = {
+    /**
+     * 适用于某个请求比较特殊，需要单独制定前缀的情形
+     */
+    prefix?: string;
+    /**
+     * 给当前路由添加一个或多个中间件
+     */
+    middlewares?: Array<Koa.Middleware>;
+};
+export declare const get: (path: string, options?: RouteOptions) => (target: any, property: string, descriptor: any) => void;
+export declare const post: (path: string, options?: RouteOptions) => (target: any, property: string, descriptor: any) => void;
+export declare const put: (path: string, options?: RouteOptions) => (target: any, property: string, descriptor: any) => void;
+export declare const del: (path: string, options?: RouteOptions) => (target: any, property: string, descriptor: any) => void;
+export declare const patch: (path: string, options?: RouteOptions) => (target: any, property: string, descriptor: any) => void;
+/**
+ * 应用在类上，以给该类中所有路由添加中间件
+ * @param middlewares Koa.Middleware数组
+ */
+export declare const middlewares: (middlewares: import("koa-compose").Middleware<Koa.ParameterizedContext<any, {}>>[]) => (target: any) => void;
+export declare const load: (prefix: string, folder: string, options?: LoadOptions) => KoaRouter<any, {}>;
 export {};
