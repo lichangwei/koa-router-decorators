@@ -88,8 +88,8 @@ exports.load = function (prefix, folder, options) {
                     mws = mws.concat(options.middlewares);
                 }
                 mws.push(target[property]);
-                var _path = require('path').join('prefix' in options ? options.prefix : prefix, path);
-                router[method].apply(router, [_path].concat(mws));
+                var url = ('prefix' in options ? options.prefix : prefix) + path;
+                router[method].apply(router, [url].concat(mws));
             });
         };
     };

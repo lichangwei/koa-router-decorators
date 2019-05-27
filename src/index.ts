@@ -60,8 +60,8 @@ export const load = function(prefix: string, folder: string, options: LoadOption
                     mws = mws.concat(options.middlewares);
                 }
                 mws.push(target[property]);
-                const _path = require('path').join('prefix' in options ? options.prefix : prefix, path);
-                router[method](_path, ...mws);
+                const url = ('prefix' in options ? options.prefix : prefix) + path;
+                router[method](url, ...mws);
             });
         };
     };
